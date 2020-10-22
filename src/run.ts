@@ -75,6 +75,7 @@ export async function run() {
     else {
         core.setFailed('Not a valid action. The allowed actions are deploy, promote, reject');
     }
+    core.debug("KOUSHIK CUSTOM Var path:"+process.env['DockerFilePath']);
 }
 
 run().catch(core.setFailed);
