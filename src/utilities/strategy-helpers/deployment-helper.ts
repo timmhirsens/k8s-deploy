@@ -22,12 +22,13 @@ import { isBlueGreenDeploymentStrategy, isIngressRoute, isSMIRoute, routeBlueGre
 import { deployBlueGreenService } from './service-blue-green-helper';
 import { deployBlueGreenIngress } from './ingress-blue-green-helper';
 import { deployBlueGreenSMI } from './smi-blue-green-helper';
+import { GH_CLIENT } from '../../githubClient';
 
 export async function deploy(kubectl: Kubectl, manifestFilePaths: string[], deploymentStrategy: string) {
 
-    await models.GH_CLIENT.createDeployment()
+    await GH_CLIENT.createDeployment();
 
-    await models.GH_CLIENT.createDeploymentReference(models.DEPLOYMENT_ENVIRONMENT, models.DEPLOYMENT_ID, "in_progress");
+    await GH_CLIENT.createDeploymentStatus("in_progress");
 
     // get manifest files
     let inputManifestFiles: string[] = getUpdatedManifestFiles(manifestFilePaths);
@@ -59,7 +60,7 @@ export async function deploy(kubectl: Kubectl, manifestFilePaths: string[], depl
     }
 
     annotateAndLabelResources(deployedManifestFiles, kubectl, resourceTypes, allPods);
-    await models.GH_CLIENT.createDeploymentReference(models.DEPLOYMENT_ENVIRONMENT, models.DEPLOYMENT_ID, "success");
+    await GH_CLIENT.createDeploymentStatus("success");
 }
 
 export function getManifestFiles(manifestFilePaths: string[]): string[] {

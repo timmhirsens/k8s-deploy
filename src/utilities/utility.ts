@@ -3,7 +3,7 @@ import * as core from '@actions/core';
 import * as glob from 'glob';
 import { IExecSyncResult } from './tool-runner';
 import { Kubectl } from '../kubectl-object-model';
-import { GitHubClient } from '../githubClient';
+import { GH_CLIENT, GitHubClient } from '../githubClient';
 import { StatusCodes } from "./httpClient";
 import * as models from '../constants';
 
@@ -47,7 +47,7 @@ export function checkForErrors(execResults: IExecSyncResult[], warnIfError?: boo
             if (warnIfError) {
                 core.warning(stderr.trim());
             } else {
-                models.GH_CLIENT.createDeploymentReference(models.DEPLOYMENT_ENVIRONMENT, models.DEPLOYMENT_ID, "failure");
+                GH_CLIENT.createDeploymentStatus("failure");
                 throw new Error(stderr.trim());
             }
         }

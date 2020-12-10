@@ -2,7 +2,6 @@
 
 import { GitHubClient } from "./githubClient";
 import { githubToken, namespace } from "./input-parameters";
-import * as core from '@actions/core';
 
 export class KubernetesWorkload {
     public static pod: string = 'Pod';
@@ -52,7 +51,3 @@ export function getWorkflowAnnotationKeyLabel(workflowFilePath: string): string 
         .digest("hex");
     return `githubWorkflow_${hashKey}`;
 }
-
-export const DEPLOYMENT_ID: string = Date.now().toString();
-export const GH_CLIENT: GitHubClient = new GitHubClient(process.env.GITHUB_REPOSITORY, githubToken);
-export const DEPLOYMENT_ENVIRONMENT: string = core.getInput("environment") || namespace;

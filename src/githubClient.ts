@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import { DEPLOYMENT_ENVIRONMENT } from './constants';
+import { namespace, githubToken } from './input-parameters';
 import { WebRequest, WebResponse, sendRequest } from "./utilities/httpClient";
 
 export class GitHubClient {
@@ -28,11 +28,11 @@ export class GitHubClient {
         webRequest.method = "POST";
         webRequest.uri = deploymentStatusUrl;
         webRequest.headers = {
-            Authorization: `Bearer ${this._token}`,
-            environment: DEPLOYMENT_ENVIRONMENT
+            Authorization: `Bearer ${this._token}`
         };
         webRequest.body = JSON.stringify({
-            "ref": process.env.GITHUB_SHA
+            "ref": process.env.GITHUB_SHA,
+            environment: DEPLOYMENT_ENVIRONMENT
         });
         const response: WebResponse = await sendRequest(webRequest);
         console.log(JSON.stringify(response));
@@ -40,8 +40,7 @@ export class GitHubClient {
         return Promise.resolve(response);
     }
 
-    public async createDeploymentReference(environment: string, deploymentId:string, state: string) {
-        console.log("Creating deployment ref", deploymentId, environment, state);
+    public async createDeploymentStatus(state: string) {
 
         const deploymentStatusUrl = `https://api.github.com/repos/${this._repository}/deployments/${this._deploymentId}/statuses`;
         const webRequest = new WebRequest();
@@ -54,7 +53,7 @@ export class GitHubClient {
             "state": state,
             "log_url": `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
             "description": "",
-            "environment": environment,
+            "environment": DEPLOYMENT_ENVIRONMENT,
             "environment_url": ""
         });
         const response: WebResponse = await sendRequest(webRequest);
@@ -65,4 +64,7 @@ export class GitHubClient {
     private _deploymentId: string;
     private _repository: string;
     private _token: string;
-} 
+}
+
+export const DEPLOYMENT_ENVIRONMENT: string = core.getInput("environment") || namespace;
+export const GH_CLIENT: GitHubClient = new GitHubClient(process.env.GITHUB_REPOSITORY, githubToken);
