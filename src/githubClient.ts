@@ -21,6 +21,26 @@ export class GitHubClient {
         return Promise.resolve(response);
     }
 
+    public async createDeploymentReference(environment: string, deploymentId:string, state: string) {
+
+        const deploymentStatusUrl = `https://api.github.com/repos/${this._repository}/deployments/${deploymentId}/statuses`;
+        const webRequest = new WebRequest();
+        webRequest.method = "POST";
+        webRequest.uri = deploymentStatusUrl;
+        webRequest.headers = {
+            Authorization: `Bearer ${this._token}`
+        };
+        webRequest.body = JSON.stringify({
+            "state": state,
+            "log_url": `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+            "description": "",
+            "environment": environment,
+            "environment_url": ""
+        });
+
+        return sendRequest(webRequest);
+    }
+
     private _repository: string;
     private _token: string;
 } 

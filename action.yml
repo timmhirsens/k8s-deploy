@@ -57,7 +57,8 @@ inputs:
     description: 'Github token'
     default: ${{ github.token }}
     required: true
-
+  environment:
+    description: 'Deployment environment, defaults to namespace'
 branding:
   color: 'green' # optional, decorates the entry in the GitHub Marketplace
 runs:

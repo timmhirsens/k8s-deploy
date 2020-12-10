@@ -5,6 +5,7 @@ import { IExecSyncResult } from './tool-runner';
 import { Kubectl } from '../kubectl-object-model';
 import { GitHubClient } from '../githubClient';
 import { StatusCodes } from "./httpClient";
+import * as models from '../constants';
 
 export function getExecutableExtension(): string {
     if (os.type().match(/^Win/)) {
@@ -46,6 +47,7 @@ export function checkForErrors(execResults: IExecSyncResult[], warnIfError?: boo
             if (warnIfError) {
                 core.warning(stderr.trim());
             } else {
+                models.GH_CLIENT.createDeploymentReference(models.DEPLOYMENT_ENVIRONMENT, models.DEPLOYMENT_ID, "failure");
                 throw new Error(stderr.trim());
             }
         }

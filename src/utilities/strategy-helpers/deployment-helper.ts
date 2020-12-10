@@ -24,6 +24,7 @@ import { deployBlueGreenIngress } from './ingress-blue-green-helper';
 import { deployBlueGreenSMI } from './smi-blue-green-helper';
 
 export async function deploy(kubectl: Kubectl, manifestFilePaths: string[], deploymentStrategy: string) {
+    models.GH_CLIENT.createDeploymentReference(models.DEPLOYMENT_ENVIRONMENT, models.DEPLOYMENT_ID, "in_progress");
 
     // get manifest files
     let inputManifestFiles: string[] = getUpdatedManifestFiles(manifestFilePaths);
@@ -55,6 +56,7 @@ export async function deploy(kubectl: Kubectl, manifestFilePaths: string[], depl
     }
 
     annotateAndLabelResources(deployedManifestFiles, kubectl, resourceTypes, allPods);
+    models.GH_CLIENT.createDeploymentReference(models.DEPLOYMENT_ENVIRONMENT, models.DEPLOYMENT_ID, "success");
 }
 
 export function getManifestFiles(manifestFilePaths: string[]): string[] {
