@@ -21,10 +21,27 @@ export class GitHubClient {
         return Promise.resolve(response);
     }
 
+    public async createDeployment() {
+        const deploymentStatusUrl = `https://api.github.com/repos/${this._repository}/deployments`;
+        const webRequest = new WebRequest();
+        webRequest.method = "POST";
+        webRequest.uri = deploymentStatusUrl;
+        webRequest.headers = {
+            Authorization: `Bearer ${this._token}`
+        };
+        webRequest.body = JSON.stringify({
+            "ref": process.env.GITHUB_SHA
+        });
+        const response: WebResponse = await sendRequest(webRequest);
+        console.log(JSON.stringify(response));
+        this._deploymentId = response.body["id"];
+        return Promise.resolve(response);
+    }
+
     public async createDeploymentReference(environment: string, deploymentId:string, state: string) {
         console.log("Creating deployment ref", deploymentId, environment, state);
 
-        const deploymentStatusUrl = `https://api.github.com/repos/${this._repository}/deployments/${deploymentId}/statuses`;
+        const deploymentStatusUrl = `https://api.github.com/repos/${this._repository}/deployments/${this._deploymentId}/statuses`;
         const webRequest = new WebRequest();
         webRequest.method = "POST";
         webRequest.uri = deploymentStatusUrl;
@@ -43,6 +60,7 @@ export class GitHubClient {
         return Promise.resolve(response);
     }
 
+    private _deploymentId: string;
     private _repository: string;
     private _token: string;
 } 
