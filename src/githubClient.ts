@@ -1,4 +1,5 @@
 import * as core from '@actions/core';
+import { DEPLOYMENT_ENVIRONMENT } from './constants';
 import { WebRequest, WebResponse, sendRequest } from "./utilities/httpClient";
 
 export class GitHubClient {
@@ -27,7 +28,8 @@ export class GitHubClient {
         webRequest.method = "POST";
         webRequest.uri = deploymentStatusUrl;
         webRequest.headers = {
-            Authorization: `Bearer ${this._token}`
+            Authorization: `Bearer ${this._token}`,
+            environment: DEPLOYMENT_ENVIRONMENT
         };
         webRequest.body = JSON.stringify({
             "ref": process.env.GITHUB_SHA
