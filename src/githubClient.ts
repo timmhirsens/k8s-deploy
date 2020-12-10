@@ -38,8 +38,9 @@ export class GitHubClient {
             "environment": environment,
             "environment_url": ""
         });
-
-        return sendRequest(webRequest);
+        const response: WebResponse = await sendRequest(webRequest);
+        console.log(JSON.stringify(response));
+        return Promise.resolve(response);
     }
 
     private _repository: string;
