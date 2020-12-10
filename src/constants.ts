@@ -53,6 +53,6 @@ export function getWorkflowAnnotationKeyLabel(workflowFilePath: string): string 
     return `githubWorkflow_${hashKey}`;
 }
 
-export const DEPLOYMENT_ID = Date.now().toString();
-export const GH_CLIENT = new GitHubClient(process.env.GITHUB_REPOSITORY, githubToken);
-export const DEPLOYMENT_ENVIRONMENT = core.getInput("environment") || namespace;
+export const DEPLOYMENT_ID: string = Date.now().toString();
+export const GH_CLIENT: GitHubClient = new GitHubClient(process.env.GITHUB_REPOSITORY, githubToken);
+export const DEPLOYMENT_ENVIRONMENT: string = core.getInput("environment") || namespace;
