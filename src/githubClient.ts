@@ -22,6 +22,7 @@ export class GitHubClient {
     }
 
     public async createDeploymentReference(environment: string, deploymentId:string, state: string) {
+        console.log("Creating deployment ref", deploymentId, environment, state);
 
         const deploymentStatusUrl = `https://api.github.com/repos/${this._repository}/deployments/${deploymentId}/statuses`;
         const webRequest = new WebRequest();
