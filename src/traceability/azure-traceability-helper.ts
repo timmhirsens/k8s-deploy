@@ -25,53 +25,6 @@ function getAksResourceContext(): AksResourceContext {
   }
 }
 
-function getDeploymentPayload(aksResourceContext: AksResourceContext, deploymentName: string): any {
-  const targetResourceId = `/subscriptions/${aksResourceContext.subscriptionId}/resourceGroups/${aksResourceContext.resourceGroup}/providers/Microsoft.ContainerService/managedClusters/${aksResourceContext.clusterName}`;
-  return {
-    "location": "westus",
-    "properties": {
-      "targetResource": {
-        "id": targetResourceId,
-        "type": "Microsoft.ContainerService/managedClusters",
-        "dataProperties": {
-          "namespaces": [
-            InputParameters.namespace
-          ]
-        }
-      },
-      "deployer": {
-        "type": "Automated",
-        "properties": {
-          "provider": "GitHub",
-          "repository": process.env['GITHUB_REPOSITORY'],
-          "workflowId": "stub",
-          "workflowRunId": process.env['GITHUB_RUN_ID'],
-          "workflowRunproperties": {
-            "commitsDelta": [],
-            "issuesDelta": []
-          }
-        }
-      },
-      "resourceChanges": {
-        "type": "Data",
-        "armDeploymentId": "",
-        "armPropertyChanges": "",
-        "dataPropertyChanges": {
-          "namespace": InputParameters.namespace,
-          "dockerFile": "",
-          "manifests": {
-            "deployment": deploymentName,
-            "service": "stubservice"
-          }
-        }
-      },
-      "status": "Succeeded",
-      "startedAt": "2020-11-17T04:06:52.858948",
-      "finishedAt": "2020-11-17T04:07:52.858948"
-    }
-  };
-}
-
 async function createDeploymentResource(aksResourceContext: AksResourceContext, deploymentPayload: any): Promise<any> {
   const deploymentName = `${aksResourceContext.clusterName}-${InputParameters.namespace}-deployment-${process.env['GITHUB_SHA']}`;
   return new Promise<string>((resolve, reject) => {
@@ -97,35 +50,38 @@ async function createDeploymentResource(aksResourceContext: AksResourceContext, 
   });
 }
 
-export async function addTraceability(deploymentName): Promise<void> {
+export async function addTraceability(deployedManifestFiles: string[]): Promise<void> {
   const aksResourceContext = getAksResourceContext();
-  let deploymentPayload = getDeploymentPayload(aksResourceContext, deploymentName);
-  createDeploymentReport(aksResourceContext, deploymentName);
-  try {
-    console.log(`Trying to create the deployment resource with payload: \n${JSON.stringify(deploymentPayload)}`);
-    const deploymentResource = await createDeploymentResource(aksResourceContext, deploymentPayload);
-    console.log(`Deployment resource created successfully. Deployment resource object: \n${JSON.stringify(deploymentResource)}`);
-  } catch (error) {
-    console.log(`Some error occured: ${error}`);
-  }
+  createDeploymentReport(aksResourceContext, deployedManifestFiles);
+  // try {
+  //   console.log(`Trying to create the deployment resource with payload: \n${JSON.stringify(deploymentPayload)}`);
+  //   const deploymentResource = await createDeploymentResource(aksResourceContext, deploymentPayload);
+  //   console.log(`Deployment resource created successfully. Deployment resource object: \n${JSON.stringify(deploymentResource)}`);
+  // } catch (error) {
+  //   console.log(`Some error occured: ${error}`);
+  // }
+  return Promise.resolve();
 }
 
-function createDeploymentReport(context: AksResourceContext, deploymentManifests: string) {
-  const resource: TargetResource = {
-    id: `/subscriptions/${context.subscriptionId}/resourceGroups/${context.resourceGroup}/providers/Microsoft.ContainerService/managedClusters/${context.clusterName}`,
-    provider: 'Azure',
-    type: 'Microsoft.ContainerService/managedClusters',
-    properties: {
-      manifests: deploymentManifests
-    }
-  };
+function createDeploymentReport(context: AksResourceContext, deployedManifestFiles: string[]) {
+  // const resource: TargetResource = {
+  //   id: `/subscriptions/${context.subscriptionId}/resourceGroups/${context.resourceGroup}/providers/Microsoft.ContainerService/managedClusters/${context.clusterName}`,
+  //   provider: 'Azure',
+  //   type: 'Microsoft.ContainerService/managedClusters',
+  //   properties: {
+  //     manifests: deployedManifestFiles
+  //   }
+  // };
 
-  const artifact: Artifact = {
-    type: 'container',
-    properties: {}
-  };
+  // const artifact: Artifact = {
+  //   type: 'container',
+  //   properties: {}
+  // };
 
-  const deploymentReport: DeploymentReport = new DeploymentReport([ artifact ], 'succeeded', resource);
-  const deploymentReportPath = deploymentReport.export();
-  core.setOutput('deployment-report', deploymentReportPath);
+  // const deploymentReport: DeploymentReport = new DeploymentReport([ artifact ], 'succeeded', resource);
+  // const deploymentReportPath = deploymentReport.export();
+  // core.setOutput('deployment-report', deploymentReportPath);
+  deployedManifestFiles.forEach((manifest) => {
+    console.log(manifest);
+  });
 }
