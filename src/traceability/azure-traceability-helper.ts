@@ -86,25 +86,23 @@ function createDeploymentReport(context: AksResourceContext, deployedManifestFil
     });
   }
 
-  if (context) {
-    const resource: TargetResource = {
-      id: `/subscriptions/${context.subscriptionId}/resourceGroups/${context.resourceGroup}/providers/Microsoft.ContainerService/managedClusters/${context.clusterName}`,
-      provider: 'Azure',
-      type: 'Microsoft.ContainerService/managedClusters',
-      properties: {
-        namespace: InputParameters.namespace,
-        kubernetesObjects: kubernetesObjects
-      }
-    };
+  const resource: TargetResource = {
+    id: `/subscriptions/a/resourceGroups/v/providers/Microsoft.ContainerService/managedClusters/n`,
+    provider: 'Azure',
+    type: 'Microsoft.ContainerService/managedClusters',
+    properties: {
+      namespace: InputParameters.namespace,
+      kubernetesObjects: kubernetesObjects
+    }
+  };
 
-    const artifact: Artifact = {
-      type: 'container',
-      properties: {}
-    };
+  const artifact: Artifact = {
+    type: 'container',
+    properties: {}
+  };
 
-    const deploymentReport: DeploymentReport = new DeploymentReport([ artifact ], 'succeeded', resource);
-    const deploymentReportPath = deploymentReport.export();
-    console.log(fs.readFileSync(deploymentReportPath, { encoding: "utf-8" }));
-    //core.setOutput('deployment-report', deploymentReportPath);
-  }
+  const deploymentReport: DeploymentReport = new DeploymentReport([ artifact ], 'succeeded', resource);
+  const deploymentReportPath = deploymentReport.export();
+  console.log(fs.readFileSync(deploymentReportPath, { encoding: "utf-8" }));
+  //core.setOutput('deployment-report', deploymentReportPath);
 }
