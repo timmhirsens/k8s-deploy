@@ -21,7 +21,8 @@ function getAksResourceContext(): AksResourceContext {
     const rawContent = fs.readFileSync(aksResourceContextPath, 'utf-8');
     return JSON.parse(rawContent);
   } catch (ex) {
-    throw new Error(`An error occured while reading/parsing the contents of the file: ${aksResourceContextPath}. Error: ${ex}`);
+    return null;
+    //throw new Error(`An error occured while reading/parsing the contents of the file: ${aksResourceContextPath}. Error: ${ex}`);
   }
 }
 
