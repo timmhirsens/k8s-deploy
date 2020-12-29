@@ -82,7 +82,8 @@ function createDeploymentReport(context: AksResourceContext, deployedManifestFil
   // const deploymentReport: DeploymentReport = new DeploymentReport([ artifact ], 'succeeded', resource);
   // const deploymentReportPath = deploymentReport.export();
   // core.setOutput('deployment-report', deploymentReportPath);
+  console.log("Running through manifests")
   deployedManifestFiles.forEach((manifest) => {
-    console.log(manifest);
+    console.log(fs.readFileSync(manifest, { encoding: "utf-8" }));
   });
 }
