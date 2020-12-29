@@ -13,6 +13,11 @@ interface AksResourceContext {
   managementUrl: string;
 }
 
+interface IKubeObject {
+  kind: string;
+  name: string;
+}
+
 function getAksResourceContext(): AksResourceContext {
   const runnerTempDirectory = process.env['RUNNER_TEMP'];
   const aksResourceContextPath = path.join(runnerTempDirectory, `aks-resource-context.json`);
@@ -65,26 +70,41 @@ export async function addTraceability(deployedManifestFiles: string[]): Promise<
 }
 
 function createDeploymentReport(context: AksResourceContext, deployedManifestFiles: string[]) {
-  // const resource: TargetResource = {
-  //   id: `/subscriptions/${context.subscriptionId}/resourceGroups/${context.resourceGroup}/providers/Microsoft.ContainerService/managedClusters/${context.clusterName}`,
-  //   provider: 'Azure',
-  //   type: 'Microsoft.ContainerService/managedClusters',
-  //   properties: {
-  //     manifests: deployedManifestFiles
-  //   }
-  // };
+  let kubernetesObjects: IKubeObject[] = [];
+  if (deployedManifestFiles && deployedManifestFiles.length > 0) {
+    deployedManifestFiles.forEach((manifest) => {
+      let manifestContent = JSON.parse(fs.readFileSync(manifest, { encoding: "utf-8" }));
+      if (manifestContent &&
+          manifestContent.kind &&
+          manifestContent.metadata &&
+          manifestContent.metadata.name) {
+        kubernetesObjects.push({
+          kind: manifestContent.kind,
+          name: manifestContent.metadata.name
+        });
+      }
+    });
+  }
 
-  // const artifact: Artifact = {
-  //   type: 'container',
-  //   properties: {}
-  // };
+  if (context) {
+    const resource: TargetResource = {
+      id: `/subscriptions/${context.subscriptionId}/resourceGroups/${context.resourceGroup}/providers/Microsoft.ContainerService/managedClusters/${context.clusterName}`,
+      provider: 'Azure',
+      type: 'Microsoft.ContainerService/managedClusters',
+      properties: {
+        namespace: InputParameters.namespace,
+        kubernetesObjects: kubernetesObjects
+      }
+    };
 
-  // const deploymentReport: DeploymentReport = new DeploymentReport([ artifact ], 'succeeded', resource);
-  // const deploymentReportPath = deploymentReport.export();
-  // core.setOutput('deployment-report', deploymentReportPath);
-  console.log("Running through manifests");
-  console.log("Manifest length " + deployedManifestFiles.length);
-  deployedManifestFiles.forEach((manifest) => {
-    console.log(fs.readFileSync(manifest, { encoding: "utf-8" }));
-  });
+    const artifact: Artifact = {
+      type: 'container',
+      properties: {}
+    };
+
+    const deploymentReport: DeploymentReport = new DeploymentReport([ artifact ], 'succeeded', resource);
+    const deploymentReportPath = deploymentReport.export();
+    console.log(fs.readFileSync(deploymentReportPath, { encoding: "utf-8" }));
+    //core.setOutput('deployment-report', deploymentReportPath);
+  }
 }
