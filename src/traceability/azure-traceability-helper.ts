@@ -73,6 +73,7 @@ function createDeploymentReport(context: AksResourceContext, deployedManifestFil
   let kubernetesObjects: IKubeObject[] = [];
   if (deployedManifestFiles && deployedManifestFiles.length > 0) {
     deployedManifestFiles.forEach((manifest) => {
+      console.log(fs.readFileSync(manifest, { encoding: "utf-8" });
       let manifestContent = JSON.parse(fs.readFileSync(manifest, { encoding: "utf-8" }));
       if (manifestContent &&
           manifestContent.kind &&
