@@ -154,7 +154,7 @@ function labelResources(files: string[], kubectl: Kubectl, label: string) {
     let workflowName = process.env.GITHUB_WORKFLOW;
     workflowName = workflowName.startsWith('.github/workflows/') ?
         workflowName.replace(".github/workflows/", "") : workflowName;
-    const labels = [`workflowFriendlyName=${workflowName}`, `workflow=${label}`];
+    const labels = [`workflowFriendlyName=${workflowName.replace(/ /g, "_")}`, `workflow=${label}`];
     checkForErrors([kubectl.labelFiles(files, labels)], true);
 }
 
