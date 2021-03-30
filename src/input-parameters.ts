@@ -16,6 +16,7 @@ export const baselineAndCanaryReplicas: string = core.getInput('baseline-and-can
 export const args: string = core.getInput('arguments');
 export const forceDeployment: boolean = core.getInput('force').toLowerCase() == 'true';
 export const githubToken = core.getInput("token");
+export const recursiveApply = core.getInput("recursive-apply").toLowerCase() == 'true';
 
 if (!namespace) {
     core.debug('Namespace was not supplied; using "default" namespace instead.');
