@@ -1,7 +1,7 @@
 name: 'Deploy to Kubernetes cluster'
 description: 'Deploy to a Kubernetes cluster including, but not limited to Azure Kubernetes Service (AKS) clusters'
-inputs: 
-# Please ensure you have used either azure/k8s-actions/aks-set-context or azure/k8s-actions/k8s-set-context in the workflow before this action
+inputs:
+  # Please ensure you have used either azure/k8s-actions/aks-set-context or azure/k8s-actions/k8s-set-context in the workflow before this action
   namespace:
     description: 'Choose the target Kubernetes namespace. If the namespace is not provided, the commands will run in the default namespace.'
     required: false
@@ -9,15 +9,15 @@ inputs:
     description: 'Path to the manifest files which will be used for deployment.'
     required: true
     default: ''
-  images: 
+  images:
     description: 'Fully qualified resource URL of the image(s) to be used for substitutions on the manifest files Example: contosodemo.azurecr.io/helloworld:test'
     required: false
   imagepullsecrets:
     description: 'Name of a docker-registry secret that has already been set up within the cluster. Each of these secret names are added under imagePullSecrets field for the workloads found in the input manifest files'
     required: false
   kubectl-version:
-      description: 'Version of kubectl. Installs a specific version of kubectl binary'
-      required: false
+    description: 'Version of kubectl. Installs a specific version of kubectl binary'
+    required: false
   strategy:
     description: 'Deployment strategy to be used. Allowed values are none, canary and blue-green'
     required: false
@@ -31,14 +31,14 @@ inputs:
     required: false
     default: 0
   traffic-split-method:
-    description: "Traffic split method to be used. Allowed values are pod, smi"
+    description: 'Traffic split method to be used. Allowed values are pod, smi'
     required: false
     default: 'pod'
   baseline-and-canary-replicas:
     description: 'Baseline and canary replicas count; valid value i.e between 0 to 100.'
     required: false
     default: 0
-  percentage: 
+  percentage:
     description: 'Percentage of traffic redirect to canary deployment'
     required: false
     default: 0
@@ -57,6 +57,10 @@ inputs:
     description: 'Github token'
     default: ${{ github.token }}
     required: true
+  recursive-apply:
+    description: 'Should the kubectl apply use the flag -R'
+    default: false
+    required: false
 
 branding:
   color: 'green' # optional, decorates the entry in the GitHub Marketplace

@@ -20,8 +20,12 @@ export class Kubectl {
         }
     }
 
-    public apply(configurationPaths: string | string[], force?: boolean): IExecSyncResult {
-        let applyArgs: string[] = ['apply', '-f', this.createInlineArray(configurationPaths)];
+    public apply(configurationPaths: string | string[], force?: boolean, recursiveApply?: boolean): IExecSyncResult {
+        let applyArgs: string[] = ['apply', '-f'];
+        if (!!recursiveApply) {
+            applyArgs.push('-R');
+        }
+        applyArgs.push(this.createInlineArray(configurationPaths));
 
         if (!!force) {
             console.log("force flag is on, deployment will continue even if previous deployment already exists");

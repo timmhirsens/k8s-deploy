@@ -92,10 +92,10 @@ function deployManifests(files: string[], kubectl: Kubectl, isCanaryDeploymentSt
     } else {
         if (canaryDeploymentHelper.isSMICanaryStrategy()) {
             const updatedManifests = appendStableVersionLabelToResource(files, kubectl);
-            result = kubectl.apply(updatedManifests, TaskInputParameters.forceDeployment);
+            result = kubectl.apply(updatedManifests, TaskInputParameters.forceDeployment, TaskInputParameters.recursiveApply);
         }
         else {
-            result = kubectl.apply(files, TaskInputParameters.forceDeployment);
+            result = kubectl.apply(files, TaskInputParameters.forceDeployment, TaskInputParameters.recursiveApply);
         }
     }
     checkForErrors([result]);
