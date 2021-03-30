@@ -21,10 +21,11 @@ export class Kubectl {
     }
 
     public apply(configurationPaths: string | string[], force?: boolean, recursiveApply?: boolean): IExecSyncResult {
-        let applyArgs: string[] = ['apply', '-f'];
+        let applyArgs: string[] = ['apply'];
         if (!!recursiveApply) {
             applyArgs.push('-R');
         }
+        applyArgs.push( '-f')
         applyArgs.push(this.createInlineArray(configurationPaths));
 
         if (!!force) {
